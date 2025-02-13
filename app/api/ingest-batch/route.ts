@@ -1,5 +1,8 @@
 import { createResource } from '@/lib/actions/resources';
 import { QuestionData } from '@/lib/types';
+import { db } from '@/lib/db';
+import { resources } from '@/lib/db/schema/resources';
+import { embeddings } from '@/lib/db/schema/embeddings';
 
 // Add API key validation
 const validateApiKey = (request: Request) => {
@@ -10,6 +13,20 @@ const validateApiKey = (request: Request) => {
     return false;
   }
   return true;
+};
+
+// Function to wipe existing data
+const wipeExistingData = async () => {
+  try {
+    // Delete all records from both tables
+    // Note: Due to cascade delete in schema, deleting from resources
+    // will automatically delete related embeddings
+    await db.delete(resources);
+    return true;
+  } catch (error) {
+    console.error('Error wiping database:', error);
+    return false;
+  }
 };
 
 export async function POST(req: Request) {
@@ -28,6 +45,15 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Invalid data format' }, { status: 400 });
     }
 
+    // Wipe existing data before processing new batch
+    const wiped = await wipeExistingData();
+    if (!wiped) {
+      return Response.json(
+        { error: 'Failed to clear existing data' },
+        { status: 500 }
+      );
+    }
+
     const results = await Promise.all(
       data.map(async (item) => {
         try {
@@ -43,7 +69,7 @@ export async function POST(req: Request) {
     );
 
     return Response.json({ 
-      message: 'Batch processing complete',
+      message: 'Database wiped and new batch processing complete',
       results 
     });
   } catch (error) {
