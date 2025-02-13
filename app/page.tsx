@@ -1,11 +1,10 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { ChatInput } from '@/components/ChatInput';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     maxSteps: 3,
   });
 
@@ -30,14 +29,14 @@ export default function Chat() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="fixed bottom-0 w-full max-w-md mb-8">
-        <Input
-          value={input}
-          placeholder="Say something..."
-          onChange={handleInputChange}
-          className="bg-background border-input"
+      <div className="fixed bottom-0 w-full max-w-md mb-8">
+        <ChatInput
+          input={input}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          isLoading={isLoading}
         />
-      </form>
+      </div>
     </div>
   );
 }
