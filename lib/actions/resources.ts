@@ -7,29 +7,38 @@ import {
 } from '@/lib/db/schema/resources';
 import { db } from '../db';
 import { generateEmbeddings } from '../ai/embedding';
-import { embeddings as embeddingsTable } from '../db/schema/embeddings';
+import { embeddings } from '../db/schema/embeddings';
 
 export const createResource = async (input: NewResourceParams) => {
   try {
-    const { content } = insertResourceSchema.parse(input);
+    const { content, metadata } = insertResourceSchema.parse(input);
 
+    // First create the resource
     const [resource] = await db
       .insert(resources)
-      .values({ content })
+      .values({ 
+        content,
+        metadata 
+      })
       .returning();
 
-    const embeddings = await generateEmbeddings(content);
-    await db.insert(embeddingsTable).values(
-      embeddings.map(embedding => ({
-        resourceId: resource.id,
-        ...embedding,
-      })),
+    // Generate embeddings for the content
+    const generatedEmbeddings = await generateEmbeddings(content);
+
+    // Store each embedding
+    await Promise.all(
+      generatedEmbeddings.map(({ content: chunkContent, embedding }) =>
+        db.insert(embeddings).values({
+          resourceId: resource.id,
+          content: chunkContent,
+          embedding
+        })
+      )
     );
 
-    return 'Resource successfully created and embedded.';
-  } catch (error) {
-    return error instanceof Error && error.message.length > 0
-      ? error.message
-      : 'Error, please try again.';
+    return `Resource successfully created for thread ${metadata.thread_id}`;
+  } catch (e) {
+    if (e instanceof Error)
+      return e.message.length > 0 ? e.message : 'Error, please try again.';
   }
 };

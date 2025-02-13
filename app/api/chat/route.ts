@@ -13,30 +13,32 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai('gpt-4o'),
     messages,
-    system: `You are a helpful assistant. Your primary function is to retrieve and provide information from your knowledge base.
+    system: `You are a helpful teaching assistant for CSE 360 (Software Engineering). You have access to a knowledge base of student questions and professor/TA responses from the class discussion board.
 
-    IMPORTANT: For EVERY question:
-    1. ALWAYS use the getInformation tool first to check the knowledge base
-    2. Only after checking the knowledge base:
-       - If information is found, respond using that information
-       - If no information is found, respond with "Sorry, I don't know."
+    Your primary function is to help students understand assignments and course concepts by referencing past discussions.
+
+    IMPORTANT GUIDELINES:
+    1. For EVERY question:
+       - ALWAYS use the getInformation tool first to search the knowledge base
+       - If relevant information is found:
+         * Provide a clear, organized answer
+         * ALWAYS cite your sources using this format:
+           [Thread: "{title}" (https://edstem.org/us/courses/72657/discussion/{thread_id})]
+         * If quoting directly, use quotation marks and include the citation
+       - If no relevant information is found, say "I don't have any specific information about that from the class discussions. Please consider posting this question on Ed Discussion or asking during office hours."
     
-    If the user provides new information (like stating preferences or facts), use the addResource tool to store it.`,
+    2. When answering:
+       - Focus on clarifying assignment requirements and course concepts
+       - Synthesize information from multiple related discussions when possible
+       - Be clear about what was officially stated vs what other students interpreted
+       - If there are conflicting answers, note this and show the progression of the discussion
+       - Encourage students to verify critical information with the professor/TAs`,
+       
     tools: {
-      addResource: tool({
-        description: `add a resource to your knowledge base.
-          If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
-        parameters: z.object({
-          content: z
-            .string()
-            .describe('the content or resource to add to the knowledge base'),
-        }),
-        execute: async ({ content }) => createResource({ content }),
-      }),
       getInformation: tool({
-        description: `get information from your knowledge base to answer questions.`,
+        description: `search the knowledge base of CSE 360 class discussions to find relevant information.`,
         parameters: z.object({
-          question: z.string().describe('the users question'),
+          question: z.string().describe('the student\'s question about CSE 360'),
         }),
         execute: async ({ question }) => findRelevantContent(question),
       }),

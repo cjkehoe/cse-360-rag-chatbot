@@ -1,8 +1,9 @@
 import { embed, embedMany } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { db } from '../db';
-import { cosineDistance, desc, gt, sql } from 'drizzle-orm';
+import { cosineDistance, desc, gt, sql, eq } from 'drizzle-orm';
 import { embeddings } from '../db/schema/embeddings';
+import { resources } from '../db/schema/resources';
 
 const embeddingModel = openai.embedding('text-embedding-ada-002');
 
@@ -40,8 +41,14 @@ export const findRelevantContent = async (userQuery: string) => {
     userQueryEmbedded,
   )})`;
   const similarGuides = await db
-    .select({ name: embeddings.content, similarity })
+    .select({
+      content: embeddings.content,
+      similarity,
+      resourceId: embeddings.resourceId,
+      metadata: resources.metadata
+    })
     .from(embeddings)
+    .leftJoin(resources, eq(embeddings.resourceId, resources.id))
     .where(gt(similarity, 0.5))
     .orderBy(t => desc(t.similarity))
     .limit(4);
