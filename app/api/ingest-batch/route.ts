@@ -1,8 +1,27 @@
 import { createResource } from '@/lib/actions/resources';
 import { QuestionData } from '@/lib/types';
 
+// Add API key validation
+const validateApiKey = (request: Request) => {
+  const apiKey = request.headers.get('x-api-key');
+  const validApiKey = process.env.INGESTION_API_KEY;
+  
+  if (!apiKey || apiKey !== validApiKey) {
+    return false;
+  }
+  return true;
+};
+
 export async function POST(req: Request) {
   try {
+    // Check API key before processing
+    if (!validateApiKey(req)) {
+      return Response.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const data: QuestionData[] = await req.json();
     
     if (!Array.isArray(data)) {
