@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { BuyMeACoffee } from "@/components/BuyMeACoffee"
+import { Analytics } from '@vercel/analytics/react';
 
 // Remove the Inter configuration
 // const inter = Inter({ subsets: ["latin"] });
@@ -20,6 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
+      <head>
+        {/* ... existing head content ... */}
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -28,6 +32,7 @@ export default function RootLayout({
       >
         <BuyMeACoffee />
         {children}
+        <Analytics />
       </body>
     </html>
   );
