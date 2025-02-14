@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SparklesIcon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useScrollToBottom } from '@/lib/hooks/use-scroll-to-bottom';
 
 interface MessagesProps {
   messages: Array<Message>;
@@ -77,7 +78,7 @@ function ThinkingMessage() {
           <SparklesIcon size={14} />
         </div>
         <div className="flex flex-col gap-2 text-muted-foreground">
-          Thinking...
+          Searching Ed Discussion...
         </div>
       </div>
     </motion.div>
@@ -85,9 +86,21 @@ function ThinkingMessage() {
 }
 
 function PureMessages({ messages, isLoading }: MessagesProps) {
+  const [messagesContainerRef, messagesEndRef] = useScrollToBottom<HTMLDivElement>();
+
   return (
-    <div className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto pt-4">
-      {messages.length === 0 && <Overview />}
+    <div 
+      ref={messagesContainerRef}
+      className="flex flex-col-reverse min-w-0 gap-6 flex-1 overflow-y-auto pt-4"
+    >
+      <div
+        ref={messagesEndRef}
+        className="shrink-0 min-w-[24px] min-h-[24px]"
+      />
+
+      {isLoading && messages.length > 0 && messages[messages.length - 1].role === 'user' && (
+        <ThinkingMessage />
+      )}
 
       {messages.map((message) => (
         <MessageComponent 
@@ -95,11 +108,9 @@ function PureMessages({ messages, isLoading }: MessagesProps) {
           role={message.role}
           content={message.content}
         />
-      ))}
+      )).reverse()}
 
-      {isLoading && messages.length > 0 && messages[messages.length - 1].role === 'user' && (
-        <ThinkingMessage />
-      )}
+      {messages.length === 0 && <Overview />}
     </div>
   );
 }
