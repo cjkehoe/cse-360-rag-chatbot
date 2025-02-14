@@ -6,7 +6,7 @@ export const Overview = () => {
           Welcome to the CSE 360 Teaching Assistant
         </p>
         <p className="text-muted-foreground">
-          I'm here to help answer your questions about assignments and course concepts
+          I&apos;m here to help answer your questions about assignments and course concepts
           by referencing past ed discussion posts. Feel free to ask anything!
         </p>
       </div>
