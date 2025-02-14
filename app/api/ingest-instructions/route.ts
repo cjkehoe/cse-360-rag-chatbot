@@ -2,6 +2,7 @@ import { createResource } from '@/lib/actions/resources';
 import { db } from '@/lib/db';
 import { resources } from '@/lib/db/schema/resources';
 import { validateApiKey } from '@/lib/auth/validate-api-key';
+import { sql } from 'drizzle-orm';
 
 // Type for the instruction data coming from Python script
 interface InstructionData {
@@ -15,6 +16,20 @@ interface InstructionData {
     page_number?: number;
   }
 }
+
+// Function to wipe existing instruction data only
+const wipeExistingInstructions = async () => {
+  try {
+    // Delete only instruction type resources
+    // Due to cascade delete, this will also remove their embeddings
+    await db.delete(resources)
+      .where(sql`${resources.type} = 'instruction'`);
+    return true;
+  } catch (error) {
+    console.error('Error wiping instruction data:', error);
+    return false;
+  }
+};
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +45,15 @@ export async function POST(req: Request) {
     
     if (!Array.isArray(data)) {
       return Response.json({ error: 'Invalid data format' }, { status: 400 });
+    }
+
+    // Wipe existing instruction data before processing new batch
+    const wiped = await wipeExistingInstructions();
+    if (!wiped) {
+      return Response.json(
+        { error: 'Failed to clear existing instruction data' },
+        { status: 500 }
+      );
     }
 
     // Process each instruction document
@@ -52,7 +76,7 @@ export async function POST(req: Request) {
     );
 
     return Response.json({ 
-      message: 'Instructions batch processing complete',
+      message: 'Instructions wiped and new batch processing complete',
       results 
     });
   } catch (error) {
