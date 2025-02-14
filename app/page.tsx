@@ -3,10 +3,15 @@
 import { useChat } from '@ai-sdk/react';
 import { ChatInput } from '@/components/ChatInput';
 import { Messages } from '@/components/Messages';
+import { useState } from 'react';
 
 export default function Chat() {
+  const [model, setModel] = useState('gemini');
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     maxSteps: 3,
+    body: {
+      model,
+    },
   });
 
   return (
@@ -22,6 +27,8 @@ export default function Chat() {
           handleSubmit={handleSubmit}
           isLoading={isLoading}
           messages={messages}
+          model={model}
+          onModelChange={setModel}
         />
       </div>
     </div>

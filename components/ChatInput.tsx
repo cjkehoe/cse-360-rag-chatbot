@@ -7,6 +7,7 @@ import { ArrowUpIcon } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { SuggestedActions } from './SuggestedActions';
 import { Message } from 'ai';
+import { ModelSelector } from './ModelSelector';
 
 interface ChatInputProps {
   input: string;
@@ -14,6 +15,8 @@ interface ChatInputProps {
   handleSubmit: (e: React.FormEvent) => void;
   isLoading?: boolean;
   messages: Array<Message>;
+  model: string;
+  onModelChange: (model: string) => void;
 }
 
 export function ChatInput({ 
@@ -21,7 +24,9 @@ export function ChatInput({
   handleInputChange, 
   handleSubmit,
   isLoading,
-  messages
+  messages,
+  model,
+  onModelChange
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -68,14 +73,19 @@ export function ChatInput({
           }}
         />
         
-        <div className="absolute bottom-0 right-0 p-3 w-fit flex flex-row justify-end">
-          <Button
-            className="rounded-full p-2 h-fit border dark:border-zinc-600"
-            onClick={handleSubmit}
-            disabled={input.length === 0 || isLoading}
-          >
-            <ArrowUpIcon className="size-4 md:size-5" />
-          </Button>
+        <div className="absolute bottom-0 left-0 right-0 p-3 flex justify-between items-center">
+          <div className="absolute left-3 bottom-2">
+            <ModelSelector model={model} onModelChange={onModelChange} />
+          </div>
+          <div className="ml-auto">
+            <Button
+              className="rounded-full p-2 h-fit border dark:border-zinc-600"
+              onClick={handleSubmit}
+              disabled={input.length === 0 || isLoading}
+            >
+              <ArrowUpIcon className="size-4 md:size-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

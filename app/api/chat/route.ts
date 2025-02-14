@@ -1,18 +1,30 @@
 import { createResource } from '@/lib/actions/resources';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 import { findRelevantContent } from '@/lib/ai/embedding';
+import { openai } from '@ai-sdk/openai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, model } = await req.json();
+
+    const modelConfig = model === 'gpt4' 
+      ? openai('gpt-4-turbo')
+      : google('gemini-2.0-flash', {
+          safetySettings: [
+            {
+              category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+              threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+            },
+          ],
+        });
 
     const result = streamText({
-      model: openai('gpt-4o'),
+      model: modelConfig,
       messages,
       system: `You are a helpful teaching assistant for CSE 360 (Software Engineering). You specialize in clarifying project requirements and software engineering concepts by synthesizing information from official documentation and class discussions.
 
