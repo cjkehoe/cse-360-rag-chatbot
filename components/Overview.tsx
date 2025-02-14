@@ -5,7 +5,7 @@ export const Overview = () => {
     <div className="max-w-4xl mx-auto md:mt-20">
       <div className="rounded-xl p-8 md:p-10 flex flex-col gap-8 leading-relaxed text-center max-w-2xl mx-auto">
         <p className="text-2xl md:text-4xl font-medium">
-          CSE 360 Chat Bot
+          CSE 360 Chatbot
         </p>
         <p className="text-muted-foreground text-lg md:text-xl">
           An{' '}

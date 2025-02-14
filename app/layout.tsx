@@ -12,6 +12,16 @@ import { Analytics } from '@vercel/analytics/react';
 export const metadata: Metadata = {
   title: "CSE 360 RAG Chatbot",
   description: "An AI teaching assistant that helps CSE 360 students by providing accurate answers from past Ed Discussion posts.",
+  openGraph: {
+    title: "CSE 360 RAG Chatbot",
+    description: "An AI teaching assistant that helps CSE 360 students by providing accurate answers from past Ed Discussion posts.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CSE 360 RAG Chatbot",
+    description: "An AI teaching assistant that helps CSE 360 students by providing accurate answers from past Ed Discussion posts.",
+  },
 };
 
 export default function RootLayout({
