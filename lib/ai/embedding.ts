@@ -112,14 +112,17 @@ export const generateEmbedding = async (value: string): Promise<number[]> => {
 };
 
 export const findRelevantContent = async (userQuery: string) => {
+  // Generate embedding for user query
   const userQueryEmbedded = await generateEmbedding(userQuery);
+  
+  // Calculate similarity score
   const similarity = sql<number>`1 - (${cosineDistance(
     embeddings.embedding,
     userQueryEmbedded,
   )})`;
 
-  // Fetch results with type information and balanced boosting
-  const similarContent = await db
+  // First fetch highly relevant instruction content
+  const instructionContent = await db
     .select({
       content: embeddings.content,
       similarity,
@@ -129,16 +132,63 @@ export const findRelevantContent = async (userQuery: string) => {
     })
     .from(embeddings)
     .leftJoin(resources, eq(embeddings.resourceId, resources.id))
-    .where(gt(similarity, 0.5))
+    .where(sql`${resources.type} = 'instruction' AND ${similarity} > 0.6`)
+    .orderBy(desc(similarity))
+    .limit(3);
+
+  // Then fetch relevant discussion posts with smart boosting
+  const discussionContent = await db
+    .select({
+      content: embeddings.content,
+      similarity,
+      resourceId: embeddings.resourceId,
+      metadata: resources.metadata,
+      type: resources.type,
+    })
+    .from(embeddings)
+    .leftJoin(resources, eq(embeddings.resourceId, resources.id))
+    .where(sql`${resources.type} = 'discussion' AND ${similarity} > 0.5`)
     .orderBy(
-      // More balanced boosting between instructions and discussions
       sql`CASE 
-        WHEN ${resources.type} = 'instruction' THEN ${similarity} + 0.1
-        WHEN ${resources.type} = 'discussion' AND (${resources.metadata}->>'is_staff_answered')::boolean = true THEN ${similarity} + 0.08
-        WHEN ${resources.type} = 'discussion' THEN ${similarity}
+        WHEN (${resources.metadata}->>'is_staff_answered')::boolean = true AND ${similarity} > 0.7 THEN ${similarity} + 0.2
+        WHEN (${resources.metadata}->>'is_staff_answered')::boolean = true THEN ${similarity} + 0.1
+        WHEN (${resources.metadata}->>'answer_count')::int > 3 THEN ${similarity} + 0.05
+        ELSE ${similarity}
       END DESC`
     )
-    .limit(8);  // Increased limit to get more varied context
+    .limit(6);
 
-  return similarContent;
+  // Combine and sort results
+  return [...instructionContent, ...discussionContent]
+    .sort((a, b) => {
+      // Custom sorting logic that prioritizes:
+      // 1. Official instructions with high similarity
+      // 2. Staff-answered posts with high similarity
+      // 3. Popular discussion threads
+      const aScore = getCustomScore(a);
+      const bScore = getCustomScore(b);
+      return bScore - aScore;
+    })
+    .slice(0, 8);
+};
+
+const getCustomScore = (content: any) => {
+  let score = content.similarity;
+  
+  // Boost official instructions
+  if (content.type === 'instruction') {
+    score += 0.1;
+  }
+  
+  // Boost staff-answered posts
+  if (content.type === 'discussion' && content.metadata.is_staff_answered) {
+    score += 0.08;
+  }
+  
+  // Small boost for popular threads
+  if (content.metadata.answer_count > 3) {
+    score += 0.03;
+  }
+  
+  return score;
 };

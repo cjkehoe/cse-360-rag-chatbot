@@ -1,5 +1,5 @@
 import { Message } from 'ai';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { Overview } from './Overview';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,6 +7,7 @@ import { SparklesIcon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useScrollToBottom } from '@/lib/hooks/use-scroll-to-bottom';
+import React from 'react';
 
 interface MessagesProps {
   messages: Array<Message>;
@@ -76,6 +77,17 @@ function MessageComponent({ role, content }: { role: string; content: string }) 
 }
 
 function ThinkingMessage() {
+  const messages = [
+    "Aligning the stars...",
+    "Searching far and wide...",
+    "Chris is perpetually single...",
+    "Filtering through the slop..."
+  ];
+
+  const [message] = React.useState(() => 
+    messages[Math.floor(Math.random() * messages.length)]
+  );
+
   return (
     <motion.div
       className="w-full mx-auto max-w-3xl px-4"
@@ -87,7 +99,7 @@ function ThinkingMessage() {
           <SparklesIcon size={14} />
         </div>
         <div className="flex flex-col gap-2 text-muted-foreground">
-          Searching Ed Discussion...
+          {message}
         </div>
       </div>
     </motion.div>

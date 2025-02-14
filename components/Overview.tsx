@@ -16,7 +16,7 @@ export const Overview = () => {
           >
             open source
           </Link>{' '}
-          AI assistant powered by Retrieval-Augmented Generation. Using a vector database and semantic search, it finds and synthesizes relevant information from past Ed Discussion posts to provide accurate answers about assignments and project requirements.
+          AI assistant powered by Retrieval-Augmented Generation. Using a vector database and semantic search, it finds and synthesizes relevant information from past Ed Discussion posts and Official Course Documents to provide accurate answers about assignments and project requirements.
         </p>
       </div>
     </div>
