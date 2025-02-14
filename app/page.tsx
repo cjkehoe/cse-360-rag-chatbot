@@ -21,6 +21,7 @@ export default function Chat() {
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
           isLoading={isLoading}
+          messages={messages}
         />
       </div>
     </div>
