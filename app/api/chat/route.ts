@@ -22,6 +22,7 @@ export async function POST(req: Request) {
        - ALWAYS use the getInformation tool first to search the knowledge base
        - If relevant information is found:
          * Provide a clear, organized answer
+         * Use markdown formatting for better readability (bold, lists, etc.)
          * ALWAYS cite your sources using this format:
            [Thread: "{title}" (https://edstem.org/us/courses/72657/discussion/{thread_id})]
          * If quoting directly, use quotation marks and include the citation
