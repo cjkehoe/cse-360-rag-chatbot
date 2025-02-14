@@ -6,7 +6,7 @@ An AI teaching assistant that helps CSE 360 students by providing accurate answe
 
 This chatbot uses advanced AI techniques to provide reliable answers about course content:
 
-1. **Fetching Ed Discussion Content**: Ed Discussion posts are fetched directly from the ed discussion API and sent to our endpoint /api/ingest-batch
+1. **Fetching Ed Discussion Content**: Ed Discussion posts are fetched directly from the ed discussion API and sent to our endpoint /api/ingest-batch. The data is fetched every 2 hours from a [Github Actions](https://github.com/cjkehoe/ed_dicussion_scraper) python script.
 1. **Vector Database Storage**: Ingest batch generates embeddings for each post and stores them in a vector database
 2. **Semantic Search**: When the user asks a question, the system performs semantic search to find the most relevant past discussions
 3. **Contextual Responses**: GPT-4o synthesizes information from multiple sources to provide comprehensive, accurate answers
