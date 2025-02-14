@@ -18,7 +18,7 @@ function MessageComponent({ role, content }: { role: string; content: string }) 
     <AnimatePresence>
       <motion.div
         className={cn(
-          "w-full mx-auto max-w-3xl px-4 group/message",
+          "w-full mx-auto px-4 group/message",
           role === 'user' && "flex justify-end"
         )}
         initial={{ y: 5, opacity: 0 }}
@@ -27,32 +27,31 @@ function MessageComponent({ role, content }: { role: string; content: string }) 
       >
         <div className={cn(
           'flex gap-4',
-          role === 'user' ? 'max-w-2xl' : 'w-full'
+          role === 'user' ? 'max-w-[80%] md:max-w-[60%]' : 'w-full'
         )}>
           {role === 'assistant' && (
-            <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
+            <div className="size-8 md:size-10 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
               <div className="translate-y-px">
-                <SparklesIcon size={14} />
+                <SparklesIcon className="size-4 md:size-5" />
               </div>
             </div>
           )}
 
           <div className={cn(
-            'flex flex-col gap-4',
-            role === 'user' ? 'bg-primary text-primary-foreground px-3 py-2 rounded-xl' : ''
+            'flex flex-col gap-4 w-full',
+            role === 'user' ? 'bg-primary text-primary-foreground px-4 py-3 rounded-xl text-lg' : ''
           )}>
             {role === 'user' ? (
-              <p className="text-sm">{content}</p>
+              <p className="text-base md:text-lg">{content}</p>
             ) : (
-              <div className="prose prose-sm dark:prose-invert max-w-none">
+              <div className="prose prose-lg dark:prose-invert max-w-none">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    // Optional: customize how different elements are rendered
-                    p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
-                    ul: ({ children }) => <ul className="mb-4 list-disc pl-4">{children}</ul>,
-                    ol: ({ children }) => <ol className="mb-4 list-decimal pl-4">{children}</ol>,
-                    code: ({ children }) => <code className="bg-muted px-1 py-0.5 rounded">{children}</code>,
+                    p: ({ children }) => <p className="mb-4 last:mb-0 text-base md:text-lg">{children}</p>,
+                    ul: ({ children }) => <ul className="mb-4 list-disc pl-4 text-base md:text-lg">{children}</ul>,
+                    ol: ({ children }) => <ol className="mb-4 list-decimal pl-4 text-base md:text-lg">{children}</ol>,
+                    code: ({ children }) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm md:text-base">{children}</code>,
                   }}
                 >
                   {content}

@@ -10,12 +10,12 @@ export default function Chat() {
   });
 
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      <div className="flex-1 space-y-4 overflow-y-auto">
+    <div className="flex flex-col w-full max-w-5xl py-24 mx-auto stretch px-4">
+      <div className="flex-1 space-y-6 overflow-y-auto">
         <Messages messages={messages} isLoading={isLoading} />
       </div>
 
-      <div className="fixed bottom-0 w-full max-w-md p-4 bg-background border-t">
+      <div className="fixed bottom-0 w-full max-w-5xl p-4 mx-auto left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm border-t">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}

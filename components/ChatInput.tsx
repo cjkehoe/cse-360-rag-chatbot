@@ -35,14 +35,14 @@ export function ChatInput({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-4xl mx-auto">
       <Textarea
         ref={textareaRef}
         placeholder="Send a message..."
         value={input}
         onChange={handleInputChange}
         className={cn(
-          "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700",
+          "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl text-base md:text-lg bg-muted pb-12 dark:border-zinc-700",
         )}
         rows={1}
         onKeyDown={(event) => {
@@ -55,13 +55,13 @@ export function ChatInput({
         }}
       />
       
-      <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
+      <div className="absolute bottom-0 right-0 p-3 w-fit flex flex-row justify-end">
         <Button
-          className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+          className="rounded-full p-2 h-fit border dark:border-zinc-600"
           onClick={handleSubmit}
           disabled={input.length === 0 || isLoading}
         >
-          <ArrowUpIcon size={14} />
+          <ArrowUpIcon className="size-4 md:size-5" />
         </Button>
       </div>
     </div>
