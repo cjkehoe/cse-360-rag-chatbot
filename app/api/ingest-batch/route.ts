@@ -3,6 +3,7 @@ import { QuestionData } from '@/lib/types';
 import { db } from '@/lib/db';
 import { resources } from '@/lib/db/schema/resources';
 import { embeddings } from '@/lib/db/schema/embeddings';
+import { sql } from 'drizzle-orm';
 
 // Add API key validation
 const validateApiKey = (request: Request) => {
@@ -15,16 +16,16 @@ const validateApiKey = (request: Request) => {
   return true;
 };
 
-// Function to wipe existing data
+// Function to wipe existing discussion data only
 const wipeExistingData = async () => {
   try {
-    // Delete all records from both tables
-    // Note: Due to cascade delete in schema, deleting from resources
-    // will automatically delete related embeddings
-    await db.delete(resources);
+    // Delete only discussion type resources
+    // Due to cascade delete, this will also remove their embeddings
+    await db.delete(resources)
+      .where(sql`${resources.type} = 'discussion'`);
     return true;
   } catch (error) {
-    console.error('Error wiping database:', error);
+    console.error('Error wiping discussion data:', error);
     return false;
   }
 };
@@ -59,7 +60,11 @@ export async function POST(req: Request) {
         try {
           return await createResource({
             content: item.content,
-            metadata: item.metadata,
+            type: 'discussion',
+            metadata: {
+              type: 'discussion',
+              ...item.metadata
+            }
           });
         } catch (error) {
           console.error(`Failed to process item with thread_id ${item.metadata.thread_id}:`, error);

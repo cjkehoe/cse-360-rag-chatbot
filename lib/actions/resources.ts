@@ -11,13 +11,14 @@ import { embeddings } from '../db/schema/embeddings';
 
 export const createResource = async (input: NewResourceParams) => {
   try {
-    const { content, metadata } = insertResourceSchema.parse(input);
+    const { content, type, metadata } = insertResourceSchema.parse(input);
 
     // First create the resource
     const [resource] = await db
       .insert(resources)
       .values({ 
         content,
+        type,
         metadata 
       })
       .returning();
@@ -36,7 +37,12 @@ export const createResource = async (input: NewResourceParams) => {
       )
     );
 
-    return `Resource successfully created for thread ${metadata.thread_id}`;
+    // Return appropriate message based on resource type
+    if (metadata.type === 'discussion') {
+      return `Resource successfully created for thread ${metadata.thread_id}`;
+    } else {
+      return `Resource successfully created for document ${metadata.document_id}`;
+    }
   } catch (e) {
     if (e instanceof Error)
       return e.message.length > 0 ? e.message : 'Error, please try again.';
