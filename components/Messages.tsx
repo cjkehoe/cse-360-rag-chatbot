@@ -52,6 +52,16 @@ function MessageComponent({ role, content }: { role: string; content: string }) 
                     ul: ({ children }) => <ul className="mb-4 list-disc pl-4 text-base md:text-lg">{children}</ul>,
                     ol: ({ children }) => <ol className="mb-4 list-decimal pl-4 text-base md:text-lg">{children}</ol>,
                     code: ({ children }) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm md:text-base">{children}</code>,
+                    a: ({ href, children }) => (
+                      <a 
+                        href={href} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary underline underline-offset-4"
+                      >
+                        {children}
+                      </a>
+                    ),
                   }}
                 >
                   {content}

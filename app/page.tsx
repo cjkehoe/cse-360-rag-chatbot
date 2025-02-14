@@ -15,7 +15,7 @@ export default function Chat() {
         <Messages messages={messages} isLoading={isLoading} />
       </div>
 
-      <div className="fixed bottom-0 w-full max-w-5xl p-4 mx-auto left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm border-t">
+      <div className="fixed bottom-0 w-full max-w-5xl p-4 mx-auto left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}

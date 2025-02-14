@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { BuyMeACoffee } from "@/components/BuyMeACoffee"
 
 // Remove the Inter configuration
 // const inter = Inter({ subsets: ["latin"] });
@@ -25,6 +26,7 @@ export default function RootLayout({
           GeistSans.className
         )}
       >
+        <BuyMeACoffee />
         {children}
       </body>
     </html>

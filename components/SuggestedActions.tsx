@@ -24,14 +24,14 @@ function PureSuggestedActions({ input, handleSubmit, handleInputChange }: Sugges
       action: 'Can you explain the user story #6?',
     },
     {
-      title: 'Explain',
-      label: 'software testing',
-      action: 'What are the different types of software testing we need to know?',
+      title: 'Is Astah requried',
+      label: 'for HW2?',
+      action: 'Is Astah required for HW2?',
     },
     {
-      title: 'Clarify',
-      label: 'project deadlines',
-      action: 'What are the upcoming project deadlines and requirements?',
+      title: 'How many classes',
+      label: 'are required for HW2?',
+      action: 'How many classes are required for HW2?',
     },
   ];
 
@@ -58,7 +58,7 @@ function PureSuggestedActions({ input, handleSubmit, handleInputChange }: Sugges
                 handleSubmit({} as React.FormEvent);
               }, 100);
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+            className="text-left border rounded-xl px-4 py-3.5 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
           >
             <span className="font-medium">{suggestedAction.title}</span>
             <span className="text-muted-foreground">
