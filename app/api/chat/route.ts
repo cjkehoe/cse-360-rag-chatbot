@@ -1,5 +1,4 @@
 import { createResource } from '@/lib/actions/resources';
-import { google } from '@ai-sdk/google';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 import { findRelevantContent } from '@/lib/ai/embedding';
@@ -14,14 +13,7 @@ export async function POST(req: Request) {
 
     const modelConfig = model === 'gpt4' 
       ? openai('gpt-4o-mini')
-      : google('gemini-2.0-flash', {
-          safetySettings: [
-            {
-              category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-              threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-            },
-          ],
-        });
+      : openai('o3-mini');
 
     const result = streamText({
       model: modelConfig,

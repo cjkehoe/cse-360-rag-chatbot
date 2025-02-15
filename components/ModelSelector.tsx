@@ -24,10 +24,10 @@ export function ModelSelector({ model, onModelChange }: ModelSelectorProps) {
       </SelectTrigger>
       <SelectContent className="border-none bg-muted backdrop-blur-sm min-w-[180px]">
         <SelectItem 
-          value="gemini" 
+          value="o3" 
           className="font-medium focus:bg-muted focus:text-foreground cursor-pointer whitespace-nowrap text-left pl-2"
         >
-          Gemini 2.0 Flash
+          O3-mini
         </SelectItem>
         <SelectItem 
           value="gpt4" 

@@ -6,7 +6,7 @@ import { Messages } from '@/components/Messages';
 import { useState } from 'react';
 
 export default function Chat() {
-  const [model, setModel] = useState('gemini');
+  const [model, setModel] = useState('gpt4');
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     maxSteps: 3,
     body: {
