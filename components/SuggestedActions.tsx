@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { ChatRequestOptions, CreateMessage, Message } from 'ai';
 import { memo } from 'react';
+import { analytics } from '@/lib/analytics';
 
 interface SuggestedActionsProps {
   input: string;
@@ -35,6 +36,19 @@ function PureSuggestedActions({ input, handleSubmit, handleInputChange }: Sugges
     },
   ];
 
+  const handleSuggestedActionClick = (action: string, title: string) => {
+    analytics.trackSuggestedActionClick(title);
+    
+    const syntheticEvent = {
+      target: { value: action },
+    } as React.ChangeEvent<HTMLTextAreaElement>;
+    
+    handleInputChange(syntheticEvent);
+    setTimeout(() => {
+      handleSubmit({} as React.FormEvent);
+    }, 100);
+  };
+
   return (
     <div className="grid sm:grid-cols-2 gap-2 w-full">
       {suggestedActions.map((suggestedAction, index) => (
@@ -48,16 +62,10 @@ function PureSuggestedActions({ input, handleSubmit, handleInputChange }: Sugges
         >
           <Button
             variant="ghost"
-            onClick={() => {
-              const syntheticEvent = {
-                target: { value: suggestedAction.action },
-              } as React.ChangeEvent<HTMLTextAreaElement>;
-              
-              handleInputChange(syntheticEvent);
-              setTimeout(() => {
-                handleSubmit({} as React.FormEvent);
-              }, 100);
-            }}
+            onClick={() => handleSuggestedActionClick(
+              suggestedAction.action,
+              suggestedAction.title
+            )}
             className="text-left border rounded-xl px-4 py-3.5 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
           >
             <span className="font-medium">{suggestedAction.title}</span>

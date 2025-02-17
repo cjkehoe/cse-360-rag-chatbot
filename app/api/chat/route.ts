@@ -3,13 +3,21 @@ import { streamText, tool } from 'ai';
 import { z } from 'zod';
 import { findRelevantContent } from '@/lib/ai/embedding';
 import { openai } from '@ai-sdk/openai';
+import { analytics } from '@/lib/analytics';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  const startTime = Date.now();
   try {
     const { messages, model } = await req.json();
+
+    // Track the incoming message
+    analytics.trackMessageSent(
+      messages[messages.length - 1].content.length,
+      model
+    );
 
     const modelConfig = model === 'gpt4' 
       ? openai('gpt-4o-mini')
@@ -96,8 +104,20 @@ export async function POST(req: Request) {
       },
     });
 
+    // Track response time
+    const latency = Date.now() - startTime;
+    analytics.trackResponseReceived(
+      result.toString().length,
+      model,
+      latency
+    );
+
     return result.toDataStreamResponse();
   } catch (error) {
+    analytics.trackError(
+      'chat_error',
+      error instanceof Error ? error.message : 'Unknown error'
+    );
     console.error('Chat error:', error);
     if (error instanceof Error) {
       return new Response(error.message, { status: 500 });

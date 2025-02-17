@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SparklesIcon } from 'lucide-react';
+import { analytics } from '@/lib/analytics';
 
 interface ModelSelectorProps {
   model: string;
@@ -16,8 +17,13 @@ interface ModelSelectorProps {
 }
 
 export function ModelSelector({ model, onModelChange }: ModelSelectorProps) {
+  const handleModelChange = (newModel: string) => {
+    analytics.trackModelSwitch(model, newModel);
+    onModelChange(newModel);
+  };
+
   return (
-    <Select value={model} onValueChange={onModelChange}>
+    <Select value={model} onValueChange={handleModelChange}>
       <SelectTrigger className="w-[180px] h-8 gap-2 border-none bg-transparent hover:bg-muted/50 hover:text-accent-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 justify-start">
         <SparklesIcon className="size-3.5 shrink-0" />
         <SelectValue placeholder="Select model" className="text-left" />
