@@ -60,7 +60,7 @@ export function ChatInput({
           value={input}
           onChange={handleInputChange}
           className={cn(
-            "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl text-base md:text-lg bg-muted pb-12 dark:border-zinc-700",
+            "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl text-base md:text-lg bg-muted pb-16 dark:border-zinc-700",
           )}
           rows={1}
           onKeyDown={(event) => {
@@ -73,11 +73,11 @@ export function ChatInput({
           }}
         />
         
-        <div className="absolute bottom-0 left-0 right-0 p-3 flex justify-between items-center">
-          <div className="absolute left-3 bottom-2">
+        <div className="absolute bottom-2 left-0 right-0 px-3 flex justify-between items-center pointer-events-none">
+          <div className="pointer-events-auto">
             <ModelSelector model={model} onModelChange={onModelChange} />
           </div>
-          <div className="ml-auto">
+          <div className="pointer-events-auto">
             <Button
               className="rounded-full p-2 h-fit border dark:border-zinc-600"
               onClick={handleSubmit}
